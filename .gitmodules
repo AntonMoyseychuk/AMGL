@@ -1,0 +1,6 @@
+[submodule "amgl/thirdparty/amthreadpool"]
+	path = amgl/thirdparty/amthreadpool
+	url = https://github.com/AntonMoyseychuk/AMThreadpool.git
+[submodule "amgl/thirdparty/glm"]
+	path = amgl/thirdparty/glm
+	url = https://github.com/g-truc/glm.git
