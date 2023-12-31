@@ -10,7 +10,8 @@ file(GLOB_RECURSE AMGL_SRC CONFIGURE_DEPENDS
 add_library(${PROJECT_NAME} STATIC ${AMGL_SRC})
 
 target_include_directories(${PROJECT_NAME} 
-    PUBLIC ${PROJECT_SOURCE_DIR}/include)
+    PUBLIC ${PROJECT_SOURCE_DIR}/include
+    PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 target_link_libraries(${PROJECT_NAME} 
     PRIVATE amthreadpool glm)
