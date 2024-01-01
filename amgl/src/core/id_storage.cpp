@@ -9,7 +9,7 @@ namespace amgl
         if (id != 0) {
             m_busy_ids.set(id, true);
         } else {
-            // todo: if m_curr_id is equal 0, than there was id overflow (need to make id reusable). Push message to message queue.
+            NOT_IMPLEMENTED_YET("If m_curr_id is equal 0, than there was id overflow (need to make id reusable)");
         }
 
         return id;

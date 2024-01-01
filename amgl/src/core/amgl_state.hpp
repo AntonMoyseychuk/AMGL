@@ -2,13 +2,12 @@
 
 #include "amgl/amgl.hpp"
 
+#include <glm/glm.hpp>
+
 namespace amgl
 {
     struct amgl_state
     {
-        id_t get_buffer_binded_to_target(enum_t target) const noexcept;
-        void bind_buffer_to_target(enum_t target, id_t buffer) noexcept;
-
         id_t vao = 0;
         id_t vbo = 0;
         id_t ebo = 0;
@@ -16,6 +15,9 @@ namespace amgl
         id_t copy_read_buffer = 0;
         id_t shader_storage_buffer = 0;
         id_t uniform_buffer = 0;
+
+        debugproc debug_callback = {};
+        void* debug_user_param = nullptr;
     };
 
     amgl_state& get_amgl_global_state() noexcept;

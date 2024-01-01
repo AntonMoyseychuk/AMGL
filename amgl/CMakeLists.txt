@@ -11,7 +11,8 @@ add_library(${PROJECT_NAME} STATIC ${AMGL_SRC})
 
 target_include_directories(${PROJECT_NAME} 
     PUBLIC ${PROJECT_SOURCE_DIR}/include
-    PRIVATE ${PROJECT_SOURCE_DIR}/src)
+    PRIVATE ${PROJECT_SOURCE_DIR}/src
+    PRIVATE ${PROJECT_SOURCE_DIR}/thirdparty/debugbreak)
 
 target_link_libraries(${PROJECT_NAME} 
     PRIVATE amthreadpool glm)

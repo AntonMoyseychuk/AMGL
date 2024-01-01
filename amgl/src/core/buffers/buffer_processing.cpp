@@ -18,6 +18,7 @@ namespace amgl
         }
     }
 
+
     void delete_buffers(uint64_t n, const id_t* buffers) noexcept
     {
         RETURN_IF_NULLPTR(buffers);
@@ -27,35 +28,42 @@ namespace amgl
         }
     }
 
+
     void bind_buffer(enum_t target, id_t buffer) noexcept
     {
         gs_buffer_mng_inst.bind_buffer(target, buffer);
     }
+
 
     void buffer_data(enum_t target, uint64_t size, const void* data, enum_t usage) noexcept
     {
         gs_buffer_mng_inst.allocate_memory(target, size, data, usage);
     }
 
+
     void named_buffer_data(id_t buffer, uint64_t size, const void* data, enum_t usage) noexcept
     {
         gs_buffer_mng_inst.allocate_named_memory(buffer, size, data, usage);
     }
+
 
     bool is_buffer(id_t buffer) noexcept
     {
         return gs_buffer_mng_inst.is_buffer(buffer);
     }
 
+
     void* map_named_buffer(id_t buffer, enum_t access) noexcept
     {
         return gs_buffer_mng_inst.map_named_buffer(buffer, access);
     }
 
+
     void* map_buffer(enum_t target, enum_t access) noexcept
     {
         return gs_buffer_mng_inst.map_buffer(target, access);
     }
+
 
     void gen_vertex_arrays(uint64_t n, id_t* arrays) noexcept
     {
@@ -66,6 +74,7 @@ namespace amgl
         }
     }
 
+
     void delete_vertex_arrays(uint64_t n, const id_t* arrays) noexcept
     {
         RETURN_IF_NULLPTR(arrays);
@@ -74,6 +83,7 @@ namespace amgl
             gs_buffer_mng_inst.free_vertex_array(arrays[i]);
         }
     }
+
 
     void bind_vertex_array(id_t array) noexcept
     {

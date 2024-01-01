@@ -41,7 +41,7 @@ namespace amgl
             return true;
         }
 
-        // todo: push invalid vao id error message
+        NOT_IMPLEMENTED_YET("Set invalid ID error. Push error message to queue, if debug layer is enable");
         return false;
     }
 
@@ -49,22 +49,22 @@ namespace amgl
     static bool _check_buffer_args_validity(const id_t* buffer, const enum_t* target, const enum_t* usage, const enum_t* access) noexcept
     {
         if (buffer && !is_buffer(*buffer)) {
-            // todo: push invalid id error message
+            NOT_IMPLEMENTED_YET("Set invalid ID error. Push error message to queue, if debug layer is enable");
             return false;
         }
 
         if (target && !IN_INTERVAL_INCLUSIVE(_BUFFER_TARGET_BLOCK_BEGIN + 1, _BUFFER_TARGET_BLOCK_END - 1, *target)) {
-            // todo: push invalid target error message
+            NOT_IMPLEMENTED_YET("Set invalid target error. Push error message to queue, if debug layer is enable");
             return false;
         }
 
         if (usage && !IN_INTERVAL_INCLUSIVE(_BUFFER_USAGE_BLOCK_BEGIN + 1, _BUFFER_USAGE_BLOCK_END - 1, *usage)) {
-            // todo: push invalid usage error message
+            NOT_IMPLEMENTED_YET("Set invalid usage error. Push error message to queue, if debug layer is enable");
             return false;
         }
 
         if (access && !IN_INTERVAL_INCLUSIVE(_BUFFER_ACCESS_BLOCK_BEGIN + 1, _BUFFER_ACCESS_BLOCK_END - 1, *access)) {
-            // todo: push invalid access error message
+            NOT_IMPLEMENTED_YET("Set invalid access error. Push error message to queue, if debug layer is enable");
             return false;
         }
 
@@ -82,15 +82,59 @@ namespace amgl
         case ELEMENT_ARRAY_BUFFER:
             gs_storage.vaos.binded_ebos[vao] = buffer;
             break;
-        case COPY_READ_BUFFER: // todo
+        case COPY_READ_BUFFER:
+            NOT_IMPLEMENTED_YET("COPY_READ_BUFFER");
             break;               
-        case COPY_WRITE_BUFFER: // todo
+        case COPY_WRITE_BUFFER:
+            NOT_IMPLEMENTED_YET("COPY_WRITE_BUFFER");
             break;              
-        case SHADER_STORAGE_BUFFER: // todo
+        case SHADER_STORAGE_BUFFER:
+            NOT_IMPLEMENTED_YET("SHADER_STORAGE_BUFFER");
             break;          
-        case UNIFORM_BUFFER: //todo
+        case UNIFORM_BUFFER:
+            NOT_IMPLEMENTED_YET("UNIFORM_BUFFER");
             break;
         }
+    }
+
+
+    void _bind_buffer_to_target(enum_t target, id_t buffer) noexcept
+    {
+        switch (target) {
+        case ARRAY_BUFFER: 
+            gs_amgl_state.vbo = buffer; 
+            return;
+        case ELEMENT_ARRAY_BUFFER:
+            gs_amgl_state.ebo = buffer; 
+            return;           
+        case COPY_READ_BUFFER:
+            gs_amgl_state.copy_read_buffer = buffer; 
+            return;               
+        case COPY_WRITE_BUFFER:
+            gs_amgl_state.copy_write_buffer = buffer; 
+            return;              
+        case SHADER_STORAGE_BUFFER:
+            gs_amgl_state.shader_storage_buffer = buffer; 
+            return;          
+        case UNIFORM_BUFFER:
+            gs_amgl_state.uniform_buffer = buffer; 
+            return;
+        }
+    }
+
+
+    id_t _get_buffer_by_target(enum_t target) noexcept
+    {
+        switch (target) {
+        case ARRAY_BUFFER:          return gs_amgl_state.vbo;
+        case ELEMENT_ARRAY_BUFFER:  return gs_amgl_state.ebo;           
+        case COPY_READ_BUFFER:      return gs_amgl_state.copy_read_buffer;               
+        case COPY_WRITE_BUFFER:     return gs_amgl_state.copy_write_buffer;
+        case SHADER_STORAGE_BUFFER: return gs_amgl_state.shader_storage_buffer;
+        case UNIFORM_BUFFER:        return gs_amgl_state.uniform_buffer;
+        }
+
+        return 0;
     }
 
 
@@ -119,7 +163,7 @@ namespace amgl
             return;
         }
 
-        gs_amgl_state.bind_buffer_to_target(target, buffer);
+        _bind_buffer_to_target(target, buffer);
         gs_storage.vbos.targets[buffer] = target;
         
         if (gs_amgl_state.vao != 0) {
@@ -148,7 +192,7 @@ namespace amgl
             return;
         }
     
-        const id_t buffer = gs_amgl_state.get_buffer_binded_to_target(target);
+        const id_t buffer = _get_buffer_by_target(target);
         allocate_named_memory(buffer, size, data, usage);
     }
 
@@ -175,7 +219,7 @@ namespace amgl
             return nullptr;
         }
         
-        const id_t buffer = gs_amgl_state.get_buffer_binded_to_target(target);
+        const id_t buffer = _get_buffer_by_target(target);
         return map_named_buffer(buffer, access);
     }
 
