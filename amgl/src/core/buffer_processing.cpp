@@ -1,9 +1,7 @@
 #include "pch.hpp"
-#include "amgl/amgl.hpp"
 
 #include "buffer_manager.hpp"
-
-#include "core/id_storage.hpp"
+#include "id_storage.hpp"
 
 namespace amgl
 {

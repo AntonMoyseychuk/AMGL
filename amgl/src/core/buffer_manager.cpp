@@ -32,7 +32,7 @@ namespace amgl
 
     
     static buffer_mng_internal_storage gs_storage;
-    static amgl_state& gs_amgl_state = get_amgl_global_state();
+    static amgl_state& gs_amgl_state = amgl_state::instance();
 
 
     static bool _check_vao_validity(id_t vao) noexcept
@@ -76,23 +76,23 @@ namespace amgl
     {
         switch (target)
         {
-        case ARRAY_BUFFER:
+        case AMGL_ARRAY_BUFFER:
             gs_storage.vaos.binded_vbos[vao] = buffer;
             break;
-        case ELEMENT_ARRAY_BUFFER:
+        case AMGL_ELEMENT_ARRAY_BUFFER:
             gs_storage.vaos.binded_ebos[vao] = buffer;
             break;
-        case COPY_READ_BUFFER:
-            NOT_IMPLEMENTED_YET("COPY_READ_BUFFER");
+        case AMGL_COPY_READ_BUFFER:
+            NOT_IMPLEMENTED_YET("AMGL_COPY_READ_BUFFER");
             break;               
-        case COPY_WRITE_BUFFER:
-            NOT_IMPLEMENTED_YET("COPY_WRITE_BUFFER");
+        case AMGL_COPY_WRITE_BUFFER:
+            NOT_IMPLEMENTED_YET("AMGL_COPY_WRITE_BUFFER");
             break;              
-        case SHADER_STORAGE_BUFFER:
-            NOT_IMPLEMENTED_YET("SHADER_STORAGE_BUFFER");
+        case AMGL_SHADER_STORAGE_BUFFER:
+            NOT_IMPLEMENTED_YET("AMGL_SHADER_STORAGE_BUFFER");
             break;          
-        case UNIFORM_BUFFER:
-            NOT_IMPLEMENTED_YET("UNIFORM_BUFFER");
+        case AMGL_UNIFORM_BUFFER:
+            NOT_IMPLEMENTED_YET("AMGL_UNIFORM_BUFFER");
             break;
         }
     }
@@ -101,22 +101,22 @@ namespace amgl
     void _bind_buffer_to_target(enum_t target, id_t buffer) noexcept
     {
         switch (target) {
-        case ARRAY_BUFFER: 
+        case AMGL_ARRAY_BUFFER: 
             gs_amgl_state.vbo = buffer; 
             return;
-        case ELEMENT_ARRAY_BUFFER:
+        case AMGL_ELEMENT_ARRAY_BUFFER:
             gs_amgl_state.ebo = buffer; 
             return;           
-        case COPY_READ_BUFFER:
+        case AMGL_COPY_READ_BUFFER:
             gs_amgl_state.copy_read_buffer = buffer; 
             return;               
-        case COPY_WRITE_BUFFER:
+        case AMGL_COPY_WRITE_BUFFER:
             gs_amgl_state.copy_write_buffer = buffer; 
             return;              
-        case SHADER_STORAGE_BUFFER:
+        case AMGL_SHADER_STORAGE_BUFFER:
             gs_amgl_state.shader_storage_buffer = buffer; 
             return;          
-        case UNIFORM_BUFFER:
+        case AMGL_UNIFORM_BUFFER:
             gs_amgl_state.uniform_buffer = buffer; 
             return;
         }
@@ -126,12 +126,12 @@ namespace amgl
     id_t _get_buffer_by_target(enum_t target) noexcept
     {
         switch (target) {
-        case ARRAY_BUFFER:          return gs_amgl_state.vbo;
-        case ELEMENT_ARRAY_BUFFER:  return gs_amgl_state.ebo;           
-        case COPY_READ_BUFFER:      return gs_amgl_state.copy_read_buffer;               
-        case COPY_WRITE_BUFFER:     return gs_amgl_state.copy_write_buffer;
-        case SHADER_STORAGE_BUFFER: return gs_amgl_state.shader_storage_buffer;
-        case UNIFORM_BUFFER:        return gs_amgl_state.uniform_buffer;
+        case AMGL_ARRAY_BUFFER:          return gs_amgl_state.vbo;
+        case AMGL_ELEMENT_ARRAY_BUFFER:  return gs_amgl_state.ebo;           
+        case AMGL_COPY_READ_BUFFER:      return gs_amgl_state.copy_read_buffer;               
+        case AMGL_COPY_WRITE_BUFFER:     return gs_amgl_state.copy_write_buffer;
+        case AMGL_SHADER_STORAGE_BUFFER: return gs_amgl_state.shader_storage_buffer;
+        case AMGL_UNIFORM_BUFFER:        return gs_amgl_state.uniform_buffer;
         }
 
         return 0;

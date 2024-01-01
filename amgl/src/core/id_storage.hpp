@@ -1,9 +1,6 @@
 #pragma once
 #include "amgl/amgl.hpp"
 
-#include <bitset>
-#include <numeric>
-
 namespace amgl
 {
     class id_storage
