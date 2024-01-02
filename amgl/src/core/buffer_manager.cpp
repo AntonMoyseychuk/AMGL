@@ -102,22 +102,22 @@ namespace amgl
     {
         switch (target) {
         case AMGL_ARRAY_BUFFER: 
-            gs_amgl_state.vbo = buffer; 
+            gs_amgl_state.binded_buffers.vbo = buffer; 
             return;
         case AMGL_ELEMENT_ARRAY_BUFFER:
-            gs_amgl_state.ebo = buffer; 
+            gs_amgl_state.binded_buffers.ebo = buffer; 
             return;           
         case AMGL_COPY_READ_BUFFER:
-            gs_amgl_state.copy_read_buffer = buffer; 
+            gs_amgl_state.binded_buffers.crbo = buffer; 
             return;               
         case AMGL_COPY_WRITE_BUFFER:
-            gs_amgl_state.copy_write_buffer = buffer; 
+            gs_amgl_state.binded_buffers.cwbo = buffer; 
             return;              
         case AMGL_SHADER_STORAGE_BUFFER:
-            gs_amgl_state.shader_storage_buffer = buffer; 
+            gs_amgl_state.binded_buffers.ssbo = buffer; 
             return;          
         case AMGL_UNIFORM_BUFFER:
-            gs_amgl_state.uniform_buffer = buffer; 
+            gs_amgl_state.binded_buffers.ubo = buffer; 
             return;
         }
     }
@@ -126,12 +126,12 @@ namespace amgl
     id_t _get_buffer_by_target(enum_t target) noexcept
     {
         switch (target) {
-        case AMGL_ARRAY_BUFFER:          return gs_amgl_state.vbo;
-        case AMGL_ELEMENT_ARRAY_BUFFER:  return gs_amgl_state.ebo;           
-        case AMGL_COPY_READ_BUFFER:      return gs_amgl_state.copy_read_buffer;               
-        case AMGL_COPY_WRITE_BUFFER:     return gs_amgl_state.copy_write_buffer;
-        case AMGL_SHADER_STORAGE_BUFFER: return gs_amgl_state.shader_storage_buffer;
-        case AMGL_UNIFORM_BUFFER:        return gs_amgl_state.uniform_buffer;
+        case AMGL_ARRAY_BUFFER:          return gs_amgl_state.binded_buffers.vbo;
+        case AMGL_ELEMENT_ARRAY_BUFFER:  return gs_amgl_state.binded_buffers.ebo;           
+        case AMGL_COPY_READ_BUFFER:      return gs_amgl_state.binded_buffers.crbo;               
+        case AMGL_COPY_WRITE_BUFFER:     return gs_amgl_state.binded_buffers.cwbo;
+        case AMGL_SHADER_STORAGE_BUFFER: return gs_amgl_state.binded_buffers.ssbo;
+        case AMGL_UNIFORM_BUFFER:        return gs_amgl_state.binded_buffers.ubo;
         }
 
         return 0;
@@ -151,8 +151,9 @@ namespace amgl
     }
 
     
-    void buffer_mng::free_id(id_t id) const noexcept
+    void buffer_mng::free_buffer(id_t id) const noexcept
     {
+        deallocate_named_memory(id);
         gs_storage.vbos.ids.free_id(id);
     }
 
@@ -166,8 +167,8 @@ namespace amgl
         _bind_buffer_to_target(target, buffer);
         gs_storage.vbos.targets[buffer] = target;
         
-        if (gs_amgl_state.vao != 0) {
-            _bind_buffer_to_vao(gs_amgl_state.vao, target, buffer);
+        if (gs_amgl_state.binded_buffers.vao != 0) {
+            _bind_buffer_to_vao(gs_amgl_state.binded_buffers.vao, target, buffer);
         }
     }
 
@@ -196,7 +197,16 @@ namespace amgl
         allocate_named_memory(buffer, size, data, usage);
     }
 
-    
+    void buffer_mng::deallocate_named_memory(id_t buffer) const noexcept
+    {
+        if (!is_buffer(buffer)) {
+            return;
+        }
+
+        gs_storage.vbos.memory_blocks[buffer].clear();
+        gs_storage.vbos.memory_blocks[buffer].shrink_to_fit();
+    }
+
     bool buffer_mng::is_buffer(id_t buffer) const noexcept
     {
         return gs_storage.vbos.ids.is_busy(buffer);
@@ -233,6 +243,9 @@ namespace amgl
     void buffer_mng::free_vertex_array(id_t array) const noexcept
     {
         gs_storage.vaos.ids.free_id(array);
+        if (gs_amgl_state.binded_buffers.vao == array) {
+            gs_amgl_state.binded_buffers.vao = 0;
+        }
     }
     
     
@@ -242,9 +255,9 @@ namespace amgl
             return;
         }
 
-        gs_amgl_state.vao = array;
-        gs_amgl_state.vbo = gs_storage.vaos.binded_vbos[array];
-        gs_amgl_state.ebo = gs_storage.vaos.binded_ebos[array];
+        gs_amgl_state.binded_buffers.vao = array;
+        gs_amgl_state.binded_buffers.vbo = gs_storage.vaos.binded_vbos[array];
+        gs_amgl_state.binded_buffers.ebo = gs_storage.vaos.binded_ebos[array];
         // todo: make for other targets
     }
 }

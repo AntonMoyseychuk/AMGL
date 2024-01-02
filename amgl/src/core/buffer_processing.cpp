@@ -22,7 +22,7 @@ namespace amgl
         RETURN_IF_NULLPTR(buffers);
 
         for (uint64_t i = 0; i < n; ++i) {
-            gs_buffer_mng_inst.free_id(buffers[i]);
+            gs_buffer_mng_inst.free_buffer(buffers[i]);
         }
     }
 

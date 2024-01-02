@@ -9,12 +9,13 @@ namespace amgl
         static buffer_mng& instance() noexcept;
         
         id_t generate_buffer() const noexcept;
-        void free_id(id_t buffer) const noexcept;
+        void free_buffer(id_t buffer) const noexcept;
 
         void bind_buffer(enum_t target, id_t buffer) const noexcept;
 
         void allocate_named_memory(id_t buffer, uint64_t size, const void* data, enum_t usage /* unused yet */) const noexcept;
         void allocate_memory(enum_t target, uint64_t size, const void* data, enum_t usage /* unused yet */) const noexcept;
+        void deallocate_named_memory(id_t buffer) const noexcept;
 
         bool is_buffer(id_t buffer) const noexcept;
 
