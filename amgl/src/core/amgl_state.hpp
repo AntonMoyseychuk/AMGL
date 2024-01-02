@@ -82,7 +82,7 @@ namespace amgl
         private:
             static inline constexpr size_t get_bit_number(enum_t flag) noexcept
             { 
-                AM_ASSERT_MSG(flag < first + flags_count, "Invalid flag value");
+                AM_ASSERT_MSG(flag < first + flags_count, "flag out of range");
                 return flag - first;
             }
 
