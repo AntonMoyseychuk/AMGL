@@ -1,9 +1,9 @@
 #include "pch.hpp"
 
-#include "core/amgl_state.hpp"
-
 #include "buffer_manager.hpp"
-#include "core/id_storage.hpp"
+#include "context.hpp"
+
+#include "id_storage.hpp"
 
 namespace amgl
 {
@@ -23,7 +23,7 @@ namespace amgl
 
     struct buffers
     {
-        std::array<byte_buffer, id_storage::MAX_UNIQUE_IDS> memory_blocks;
+        std::array<std::vector<byte_t>, id_storage::MAX_UNIQUE_IDS> memory_blocks;
         std::array<enum_t, id_storage::MAX_UNIQUE_IDS> targets;
         id_storage ids;
     };
@@ -42,12 +42,6 @@ namespace amgl
         vertex_arrays vaos;
     };
     static buffer_mng_internal_storage gs_storage;
-
-
-    static inline bool is_default_id(id_t id) noexcept
-    {
-        return id == 0;
-    }
 
 
     static inline bool is_valid_buffer(const buffers& buffers_storage, id_t buffer) noexcept
@@ -109,7 +103,7 @@ namespace amgl
     }
 
 
-    static void update_state_target_buffer(amgl_state& state, enum_t target, id_t buffer) noexcept
+    static void update_state_target_buffer(context& state, enum_t target, id_t buffer) noexcept
     {
         switch (target) {
         case AMGL_ARRAY_BUFFER: 
@@ -137,7 +131,7 @@ namespace amgl
     }
 
 
-    static id_t get_buffer_by_target_from_state(amgl_state& state, enum_t target) noexcept
+    static id_t get_buffer_by_target_from_state(context& state, enum_t target) noexcept
     {
         switch (target) {
         case AMGL_ARRAY_BUFFER:          return state.binded_buffers.vbo;
@@ -168,7 +162,7 @@ namespace amgl
     
     void buffer_mng::free_buffer(id_t buffer) const noexcept
     {
-        if (is_default_id(buffer)) {
+        if (IS_DEFAULT_ID(buffer)) {
             return;
         }
 
@@ -179,7 +173,7 @@ namespace amgl
     
     void buffer_mng::bind_buffer(enum_t target, id_t buffer) const noexcept
     {
-        static amgl_state& state = amgl_state::instance();
+        static context& state = context::instance();
 
         if (!is_valid_buffer_target(target)) {
             PUSH_INVALID_BUFFER_TARGET_ERROR_MSG();
@@ -191,7 +185,7 @@ namespace amgl
             return;
         }
 
-        if (is_default_id(buffer)) {
+        if (IS_DEFAULT_ID(buffer)) {
             return;
         }
 
@@ -214,7 +208,7 @@ namespace amgl
             return;
         }
 
-        if (is_default_id(buffer)) {
+        if (IS_DEFAULT_ID(buffer)) {
             return;
         }
 
@@ -228,7 +222,7 @@ namespace amgl
     
     void buffer_mng::allocate_memory(enum_t target, uint64_t size, const void *data, enum_t usage) const noexcept
     {
-        static amgl_state& state = amgl_state::instance();
+        static context& state = context::instance();
 
         if (!is_valid_buffer_target(target)) {
             PUSH_INVALID_BUFFER_TARGET_ERROR_MSG();
@@ -246,7 +240,7 @@ namespace amgl
 
     void buffer_mng::deallocate_named_memory(id_t buffer) const noexcept
     {
-        if (is_default_id(buffer)) {
+        if (IS_DEFAULT_ID(buffer)) {
             return;
         }
 
@@ -261,7 +255,7 @@ namespace amgl
 
     bool buffer_mng::is_buffer(id_t buffer) const noexcept
     {
-        if (is_default_id(buffer)) {
+        if (IS_DEFAULT_ID(buffer)) {
             return false;
         }
 
@@ -286,7 +280,7 @@ namespace amgl
             return nullptr;
         }
 
-        if (is_default_id(buffer)) {
+        if (IS_DEFAULT_ID(buffer)) {
             return nullptr;
         }
 
@@ -296,7 +290,7 @@ namespace amgl
     
     void *buffer_mng::map_buffer(enum_t target, enum_t access) const noexcept
     {
-        static amgl_state& state = amgl_state::instance();
+        static context& state = context::instance();
 
         if (!is_valid_buffer_target(target)) {
             PUSH_INVALID_BUFFER_TARGET_ERROR_MSG();
@@ -321,9 +315,9 @@ namespace amgl
     
     void buffer_mng::free_vertex_array(id_t array) const noexcept
     {
-        static amgl_state& state = amgl_state::instance();
+        static context& state = context::instance();
 
-        if (is_default_id(array)) {
+        if (IS_DEFAULT_ID(array)) {
             return;
         }
 
@@ -336,14 +330,14 @@ namespace amgl
     
     void buffer_mng::bind_vertex_array(id_t array) const noexcept
     {
-        static amgl_state& state = amgl_state::instance();
+        static context& state = context::instance();
 
         if (!is_valid_vao(gs_storage.vaos, array)) {
             PUSH_INVALID_VAO_ID_ERROR_MSG();
             return;
         }
 
-        if (is_default_id(array)) {
+        if (IS_DEFAULT_ID(array)) {
             return;
         }
 

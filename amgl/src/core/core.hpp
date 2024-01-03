@@ -5,6 +5,8 @@
 
 #define IN_INTERVAL_INCLUSIVE(begin, end, value) (value >= begin && value <= end)
 
+#define IS_DEFAULT_ID(id) ((id) == 0)
+
 #if defined(_DEBUG) || defined(DEBUG) || !defined(NDEBUG)
     #include <cstdio>
     #include "debugbreak/debugbreak.h"
@@ -25,5 +27,3 @@
     #define AM_ASSERT_MSG(expr, ...)
     #define AM_ASSERT(expr)
 #endif
-
-using byte_buffer = std::vector<uint8_t>;

@@ -4,20 +4,20 @@
 
 namespace amgl
 {
-    class amgl_state
+    class context
     {
     public:
-        static amgl_state& instance() noexcept
+        static context& instance() noexcept
         {
-            static amgl_state state;
+            static context state;
             return state;
         }
 
-        amgl_state(const amgl_state& state) = delete;
-        amgl_state& operator=(const amgl_state& state) = delete;
+        context(const context& state) = delete;
+        context& operator=(const context& state) = delete;
 
     private:
-        amgl_state() = default;
+        context() = default;
 
     private:
         struct depth_range_t

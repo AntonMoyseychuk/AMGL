@@ -33,6 +33,7 @@ namespace amgl
         _BUFFER_USAGE_BLOCK_BEGIN,
             AMGL_STATIC_DRAW,
             AMGL_DYNAMIC_DRAW,
+            AMGL_STREAM_DRAW,
         _BUFFER_USAGE_BLOCK_END,
 
         _BUFFER_ACCESS_BLOCK_BEGIN,

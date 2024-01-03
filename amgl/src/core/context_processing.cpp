@@ -1,12 +1,10 @@
 #include "pch.hpp"
-
-#include "amgl_state.hpp"
+#include "context.hpp"
 
 
 namespace amgl
 {   
-    static amgl_state& gs_state = amgl_state::instance();
-
+    static context& gs_context = context::instance();
 
     // todo: merge different vars to duitable get_* functions
     template <typename T>
@@ -18,80 +16,80 @@ namespace amgl
 
         switch(pname) {
             case AMGL_ACTIVE_TEXTURE:
-                *data = gs_state.active_texture_unit;
+                *data = gs_context.active_texture_unit;
                 return;
             case AMGL_ALIASED_LINE_WIDTH_RANGE:
                 NOT_IMPLEMENTED_YET("AMGL_ALIASED_LINE_WIDTH_RANGE");
                 return;
             case AMGL_ARRAY_BUFFER_BINDING:
-                *data = gs_state.binded_buffers.vbo;
+                *data = gs_context.binded_buffers.vbo;
                 return;
             case AMGL_BLEND:
-                *data = gs_state.state_flags.get(AMGL_BLEND);
+                *data = gs_context.state_flags.get(AMGL_BLEND);
                 return;
             case AMGL_BLEND_COLOR:
-                data[0] = (T)gs_state.blend_color.red;
-                data[1] = (T)gs_state.blend_color.green;
-                data[2] = (T)gs_state.blend_color.blue;
-                data[3] = (T)gs_state.blend_color.alpha;
+                data[0] = (T)gs_context.blend_color.red;
+                data[1] = (T)gs_context.blend_color.green;
+                data[2] = (T)gs_context.blend_color.blue;
+                data[3] = (T)gs_context.blend_color.alpha;
                 return;
             case AMGL_BLEND_DST_ALPHA:
-                *data = gs_state.blend_dst_alpha;
+                *data = gs_context.blend_dst_alpha;
                 return;
             case AMGL_BLEND_DST_RGB:
-                *data = gs_state.blend_dst_rgb;
+                *data = gs_context.blend_dst_rgb;
                 return;
             case AMGL_BLEND_EQUATION_RGB:
-                *data = gs_state.blend_equation_rgb;
+                *data = gs_context.blend_equation_rgb;
                 return;
             case AMGL_BLEND_EQUATION_ALPHA:
-                *data = gs_state.blend_equation_alpha;
+                *data = gs_context.blend_equation_alpha;
                 return;
             case AMGL_BLEND_SRC_ALPHA:
-                *data = gs_state.blend_src_alpha;
+                *data = gs_context.blend_src_alpha;
                 return;
             case AMGL_BLEND_SRC_RGB:
-                *data = gs_state.blend_src_rgb;
+                *data = gs_context.blend_src_rgb;
                 return;
             case AMGL_COLOR_CLEAR_VALUE:
-                data[0] = (T)gs_state.clear_color.red;
-                data[1] = (T)gs_state.clear_color.green;
-                data[2] = (T)gs_state.clear_color.blue;
-                data[3] = (T)gs_state.clear_color.alpha;
+                data[0] = (T)gs_context.clear_color.red;
+                data[1] = (T)gs_context.clear_color.green;
+                data[2] = (T)gs_context.clear_color.blue;
+                data[3] = (T)gs_context.clear_color.alpha;
                 return;
             case AMGL_COLOR_LOGIC_OP:
-                *data = gs_state.state_flags.get(AMGL_COLOR_LOGIC_OP);
+                *data = gs_context.state_flags.get(AMGL_COLOR_LOGIC_OP);
                 return;
             case AMGL_COLOR_WRITEMASK:
-                data[0] = (T)gs_state.color_mask.red;
-                data[1] = (T)gs_state.color_mask.green;
-                data[2] = (T)gs_state.color_mask.blue;
-                data[3] = (T)gs_state.color_mask.alpha;
+                data[0] = (T)gs_context.color_mask.red;
+                data[1] = (T)gs_context.color_mask.green;
+                data[2] = (T)gs_context.color_mask.blue;
+                data[3] = (T)gs_context.color_mask.alpha;
                 return;
             case AMGL_CULL_FACE:
-                *data = gs_state.state_flags.get(AMGL_CULL_FACE);
+                *data = gs_context.state_flags.get(AMGL_CULL_FACE);
                 return;
             case AMGL_CURRENT_PROGRAM:
-                *data = gs_state.shader_program;
+                *data = gs_context.shader_program;
                 return;
             case AMGL_DEPTH_CLEAR_VALUE:
-                *data = (T)gs_state.depth_clear_value;
+                *data = (T)gs_context.depth_clear_value;
                 return;
             case AMGL_DEPTH_FUNC:
-                *data = gs_state.depth_func;
+                *data = gs_context.depth_func;
                 return;
             case AMGL_DEPTH_RANGE:
-                data[0] = (T)gs_state.depth_range.near;
-                data[1] = (T)gs_state.depth_range.far;
+                data[0] = (T)gs_context.depth_range.near;
+                data[1] = (T)gs_context.depth_range.far;
                 return;
             case AMGL_DEPTH_TEST:
-                *data = gs_state.state_flags.get(AMGL_DEPTH_TEST);
+                *data = gs_context.state_flags.get(AMGL_DEPTH_TEST);
                 return;
             case AMGL_DEPTH_WRITEMASK:
-                *data = gs_state.state_flags.get(AMGL_DEPTH_WRITEMASK);
+                *data = gs_context.state_flags.get(AMGL_DEPTH_WRITEMASK);
                 return;
             case AMGL_DITHER:
-                *data = gs_state.state_flags.get(AMGL_DITHER);
+                *data = gs_context.state_flags.get(AMGL_DITHER);
                 return;
             case AMGL_DRAW_BUFFER:
                 NOT_IMPLEMENTED_YET("AMGL_DRAW_BUFFER");
@@ -151,7 +149,7 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_READ_FRAMEBUFFER_BINDING");
                 return;
             case AMGL_ELEMENT_ARRAY_BUFFER_BINDING:
-                *data = gs_state.binded_buffers.ebo;
+                *data = gs_context.binded_buffers.ebo;
                 return;
             case AMGL_FRAGMENT_SHADER_DERIVATIVE_HINT:
                 NOT_IMPLEMENTED_YET("AMGL_FRAGMENT_SHADER_DERIVATIVE_HINT");
@@ -163,19 +161,19 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_IMPLEMENTATION_COLOR_READ_TYPE");
                 return;
             case AMGL_LINE_SMOOTH:
-                *data = gs_state.state_flags.get(AMGL_LINE_SMOOTH);
+                *data = gs_context.state_flags.get(AMGL_LINE_SMOOTH);
                 return;
             case AMGL_LINE_SMOOTH_HINT:
                 NOT_IMPLEMENTED_YET("AMGL_LINE_SMOOTH_HINT");
                 return;
             case AMGL_LINE_WIDTH:
-                *data = (T)gs_state.line_width;
+                *data = (T)gs_context.line_width;
                 return;
             case AMGL_LAYER_PROVOKING_VERTEX:
                 NOT_IMPLEMENTED_YET("AMGL_LAYER_PROVOKING_VERTEX");
                 return;
             case AMGL_LOGIC_OP_MODE:
-                *data = gs_state.logic_op_mode;
+                *data = gs_context.logic_op_mode;
                 return;
             case AMGL_MAX_3D_TEXTURE_SIZE:
                 NOT_IMPLEMENTED_YET("AMGL_MAX_3D_TEXTURE_SIZE");
@@ -184,7 +182,7 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_MAX_ARRAY_TEXTURE_LAYERS");
                 return;
             case AMGL_MAX_CLIP_DISTANCES:
-                *data = (T)gs_state.CLIP_DISTANCES_COUNT;
+                *data = (T)gs_context.CLIP_DISTANCES_COUNT;
                 return;
             case AMGL_MAX_COLOR_TEXTURE_SAMPLES:
                 NOT_IMPLEMENTED_YET("AMGL_MAX_COLOR_TEXTURE_SAMPLES");
@@ -292,13 +290,13 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_MAX_SAMPLE_MASK_WORDS");
                 return;
             case AMGL_MAX_SHADER_STORAGE_BUFFER_BINDINGS:
-                *data = (T)gs_state.MAX_SHADER_STORAGE_BUFFER_BINDINGS;
+                *data = (T)gs_context.MAX_SHADER_STORAGE_BUFFER_BINDINGS;
                 return;
             case AMGL_MAX_TEXTURE_BUFFER_SIZE:
                 NOT_IMPLEMENTED_YET("AMGL_MAX_TEXTURE_BUFFER_SIZE");
                 return;
             case AMGL_MAX_TEXTURE_IMAGE_UNITS:
-                *data = (T)gs_state.MAX_FRAGMENT_TEXTURE_UNITS;
+                *data = (T)gs_context.MAX_FRAGMENT_TEXTURE_UNITS;
                 return;
             case AMGL_MAX_TEXTURE_LOD_BIAS:
                 NOT_IMPLEMENTED_YET("AMGL_MAX_TEXTURE_LOD_BIAS");
@@ -331,7 +329,7 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_MAX_VERTEX_SHADER_STORAGE_BLOCKS");
                 return;
             case AMGL_MAX_VERTEX_TEXTURE_IMAGE_UNITS:
-                *data = (T)gs_state.MAX_VERTEX_TEXTURE_UNITS;
+                *data = (T)gs_context.MAX_VERTEX_TEXTURE_UNITS;
                 return;
             case AMGL_MAX_VERTEX_UNIFORM_COMPONENTS:
                 NOT_IMPLEMENTED_YET("AMGL_MAX_VERTEX_UNIFORM_COMPONENTS");
@@ -373,10 +371,10 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_PROGRAM_PIPELINE_BINDING");
                 return;
             case AMGL_PROGRAM_POINT_SIZE:
-                *data = gs_state.state_flags.get(AMGL_PROGRAM_POINT_SIZE);
+                *data = gs_context.state_flags.get(AMGL_PROGRAM_POINT_SIZE);
                 return;
             case AMGL_POINT_SIZE:
-                *data = (T)gs_state.point_size;
+                *data = (T)gs_context.point_size;
                 return;
             case AMGL_POINT_SIZE_GRANULARITY:
                 NOT_IMPLEMENTED_YET("AMGL_POINT_SIZE_GRANULARITY");
@@ -391,7 +389,7 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_POLYGON_OFFSET_UNITS");
                 return;
             case AMGL_POLYGON_SMOOTH:
-                *data = gs_state.state_flags.get(AMGL_POLYGON_SMOOTH);
+                *data = gs_context.state_flags.get(AMGL_POLYGON_SMOOTH);
                 return;
             case AMGL_POLYGON_SMOOTH_HINT:
                 NOT_IMPLEMENTED_YET("AMGL_POLYGON_SMOOTH_HINT");
@@ -421,10 +419,10 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_SAMPLES");
                 return;
             case AMGL_SCISSOR_BOX:
-                data[0] = (T)gs_state.scissor_rect.x;
-                data[1] = (T)gs_state.scissor_rect.y;
-                data[2] = (T)gs_state.scissor_rect.width;
-                data[3] = (T)gs_state.scissor_rect.height;
+                data[0] = (T)gs_context.scissor_rect.x;
+                data[1] = (T)gs_context.scissor_rect.y;
+                data[2] = (T)gs_context.scissor_rect.width;
+                data[3] = (T)gs_context.scissor_rect.height;
                 return;
             case AMGL_SHADER_STORAGE_BUFFER_BINDING:
                 NOT_IMPLEMENTED_YET("AMGL_SHADER_STORAGE_BUFFER_BINDING");
@@ -445,7 +443,7 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_SMOOTH_LINE_WIDTH_GRANULARITY");
                 return;
             case AMGL_STENCIL_TEST:
-                *data = gs_state.state_flags.get(AMGL_STENCIL_TEST);
+                *data = gs_context.state_flags.get(AMGL_STENCIL_TEST);
                 return;
             case AMGL_STENCIL_BACK_FAIL:
                 NOT_IMPLEMENTED_YET("AMGL_STENCIL_BACK_FAIL");
@@ -580,7 +578,7 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_UNPACK_SWAP_BYTES");
                 return;
             case AMGL_VERTEX_ARRAY_BINDING:
-                *data = gs_state.binded_buffers.vao;
+                *data = gs_context.binded_buffers.vao;
                 return;
             case AMGL_VERTEX_BINDING_DIVISOR:
                 NOT_IMPLEMENTED_YET("AMGL_VERTEX_BINDING_DIVISOR");
@@ -598,10 +596,10 @@ namespace amgl
                 NOT_IMPLEMENTED_YET("AMGL_MAX_VERTEX_ATTRIB_BINDINGS");
                 return;
             case AMGL_VIEWPORT:
-                data[0] = (T)gs_state.viewport_rect.x;
-                data[1] = (T)gs_state.viewport_rect.y;
-                data[2] = (T)gs_state.viewport_rect.width;
-                data[3] = (T)gs_state.viewport_rect.height;
+                data[0] = (T)gs_context.viewport_rect.x;
+                data[1] = (T)gs_context.viewport_rect.y;
+                data[2] = (T)gs_context.viewport_rect.width;
+                data[3] = (T)gs_context.viewport_rect.height;
                 return;
             case AMGL_VIEWPORT_BOUNDS_RANGE:
                 NOT_IMPLEMENTED_YET("AMGL_VIEWPORT_BOUNDS_RANGE");
@@ -629,16 +627,16 @@ namespace amgl
             return;
         }
         
-        gs_state.state_flags.set(flag, value);
+        gs_context.state_flags.set(flag, value);
     }
 
 
     void blend_color(float red, float green, float blue, float alpha) noexcept
     {
-        gs_state.blend_color.red = glm::clamp(red, 0.0f, 1.0f);
-        gs_state.blend_color.green = glm::clamp(green, 0.0f, 1.0f);
-        gs_state.blend_color.blue = glm::clamp(blue, 0.0f, 1.0f);
-        gs_state.blend_color.alpha = glm::clamp(alpha, 0.0f, 1.0f);
+        gs_context.blend_color.red = glm::clamp(red, 0.0f, 1.0f);
+        gs_context.blend_color.green = glm::clamp(green, 0.0f, 1.0f);
+        gs_context.blend_color.blue = glm::clamp(blue, 0.0f, 1.0f);
+        gs_context.blend_color.alpha = glm::clamp(alpha, 0.0f, 1.0f);
     }
 
 
@@ -660,8 +658,8 @@ namespace amgl
             return;
         }
 
-        gs_state.blend_equation_rgb = mode_rgb;
-        gs_state.blend_equation_alpha = mode_alpha;
+        gs_context.blend_equation_rgb = mode_rgb;
+        gs_context.blend_equation_alpha = mode_alpha;
     }
 
 
@@ -693,10 +691,10 @@ namespace amgl
             return;
         }
 
-        gs_state.blend_src_rgb = src_rgb;
-        gs_state.blend_src_alpha = src_alpha;
-        gs_state.blend_dst_rgb = dst_rgb;
-        gs_state.blend_dst_alpha = dst_alpha;
+        gs_context.blend_src_rgb = src_rgb;
+        gs_context.blend_src_alpha = src_alpha;
+        gs_context.blend_dst_rgb = dst_rgb;
+        gs_context.blend_dst_alpha = dst_alpha;
     }
 
     
@@ -743,16 +741,16 @@ namespace amgl
             return;
         }
 
-        gs_state.logic_op_mode = opcode;
+        gs_context.logic_op_mode = opcode;
     }
 
 
     void color_mask(bool red, bool green, bool blue, bool alpha) noexcept
     {
-        gs_state.color_mask.red = red;
-        gs_state.color_mask.green = green;
-        gs_state.color_mask.blue = blue;
-        gs_state.color_mask.alpha = alpha;
+        gs_context.color_mask.red = red;
+        gs_context.color_mask.green = green;
+        gs_context.color_mask.blue = blue;
+        gs_context.color_mask.alpha = alpha;
     }
 
 
@@ -763,7 +761,7 @@ namespace amgl
             return;
         }
 
-        gs_state.face_culling_mode = mode;
+        gs_context.face_culling_mode = mode;
     }
 
 
@@ -774,7 +772,7 @@ namespace amgl
             return;
         }
 
-        gs_state.front_face_orientation_mode = mode;
+        gs_context.front_face_orientation_mode = mode;
     }
 
 
@@ -790,7 +788,7 @@ namespace amgl
             return;
         }
 
-        gs_state.polygon_mode = mode;
+        gs_context.polygon_mode = mode;
     }
 
 
@@ -801,20 +799,20 @@ namespace amgl
             return;
         }
         
-        gs_state.depth_func = func;
+        gs_context.depth_func = func;
     }
 
 
     void depth_mask(bool flag) noexcept
     {
-        gs_state.state_flags.set(AMGL_DEPTH_WRITEMASK, flag);
+        gs_context.state_flags.set(AMGL_DEPTH_WRITEMASK, flag);
     }
 
 
     void depth_range(float near, float far) noexcept
     {
-        gs_state.depth_range.near = near;
-        gs_state.depth_range.far = far;
+        gs_context.depth_range.near = near;
+        gs_context.depth_range.far = far;
     }
 
     
@@ -832,25 +830,25 @@ namespace amgl
 
     bool is_enabled(enum_t flag) noexcept
     {
-        return gs_state.state_flags.get(flag);
+        return gs_context.state_flags.get(flag);
     }
 
 
     void scissor(int32_t x, int32_t y, uint32_t width, uint32_t height) noexcept
     {
-        gs_state.scissor_rect.x = x;
-        gs_state.scissor_rect.y = y;
-        gs_state.scissor_rect.width = width;
-        gs_state.scissor_rect.height = height;
+        gs_context.scissor_rect.x = x;
+        gs_context.scissor_rect.y = y;
+        gs_context.scissor_rect.width = width;
+        gs_context.scissor_rect.height = height;
     }
 
 
     void viewport(int32_t x, int32_t y, uint32_t width, uint32_t height) noexcept
     {
-        gs_state.viewport_rect.x = x;
-        gs_state.viewport_rect.y = y;
-        gs_state.viewport_rect.width = width;
-        gs_state.viewport_rect.height = height;
+        gs_context.viewport_rect.x = x;
+        gs_context.viewport_rect.y = y;
+        gs_context.viewport_rect.width = width;
+        gs_context.viewport_rect.height = height;
     }
 
 
