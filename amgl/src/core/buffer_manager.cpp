@@ -13,12 +13,16 @@ namespace amgl
     #define PUSH_INVALID_BUFFER_TARGET_ERROR_MSG() NOT_IMPLEMENTED_YET("Invalid buffer target. Call some function from debug processing code or something like that")
     #define PUSH_INVALID_BUFFER_USAGE_ERROR_MSG() NOT_IMPLEMENTED_YET("Invalid buffer usage. Call some function from debug processing code or something like that")
     #define PUSH_INVALID_BUFFER_ACCESS_ERROR_MSG() NOT_IMPLEMENTED_YET("Invalid buffer access. Call some function from debug processing code or something like that")
+    #define PUSH_BUFFER_OVERFLOW_ERROR_MSG() NOT_IMPLEMENTED_YET("offset + size >= buffer.size. Call some function from debug processing code or something like that")
+    #define PUSH_BUFFER_OVERLAP_ERROR_MSG() NOT_IMPLEMENTED_YET("[read_offset,read_offset+size) and [write_offset,write_offset+size) overlap. Call some function from debug processing code or something like that")
 #else
     #define PUSH_INVALID_VAO_ID_ERROR_MSG()
     #define PUSH_INVALID_BUFFER_ID_ERROR_MSG()
     #define PUSH_INVALID_BUFFER_TARGET_ERROR_MSG()
     #define PUSH_INVALID_BUFFER_USAGE_ERROR_MSG()
     #define PUSH_INVALID_BUFFER_ACCESS_ERROR_MSG()
+    #define PUSH_BUFFER_OVERFLOW_ERROR_MSG()
+    #define PUSH_BUFFER_OVERLAP_ERROR_MSG()
 #endif
 
     struct buffers
@@ -185,17 +189,24 @@ namespace amgl
             return;
         }
 
-        if (IS_DEFAULT_ID(buffer)) {
-            return;
-        }
-
         update_state_target_buffer(state, target, buffer);
-        gs_storage.buffs.targets[buffer] = target;
+
+        if (!IS_DEFAULT_ID(buffer)) {
+            gs_storage.buffs.targets[buffer] = target;
+        }
         
-        bind_buffer_to_vao(gs_storage.vaos, state.binded_buffers.vao, target, buffer);
+        if (!IS_DEFAULT_ID(state.binded_buffers.vao)) {
+            bind_buffer_to_vao(gs_storage.vaos, state.binded_buffers.vao, target, buffer);
+        }
     }
 
-    
+
+    void buffer_mng::bind_buffer_base(enum_t target, uint32_t index, id_t buffer) noexcept
+    {
+        NOT_IMPLEMENTED_YET("void buffer_mng::bind_buffer_base(enum_t target, uint32_t index, id_t buffer) noexcept");
+    }
+
+
     void buffer_mng::allocate_named_memory(id_t buffer, uint64_t size, const void *data, enum_t usage) const noexcept
     {
         if (!is_valid_buffer_usage(usage)) {
@@ -203,12 +214,8 @@ namespace amgl
             return;
         }
 
-        if (!is_valid_buffer(gs_storage.buffs, buffer)) {
+        if (!is_valid_buffer(gs_storage.buffs, buffer) || IS_DEFAULT_ID(buffer)) {
             PUSH_INVALID_BUFFER_ID_ERROR_MSG();
-            return;
-        }
-
-        if (IS_DEFAULT_ID(buffer)) {
             return;
         }
 
@@ -238,6 +245,42 @@ namespace amgl
         allocate_named_memory(buffer, size, data, usage);
     }
 
+    
+    void buffer_mng::named_sub_data(id_t buffer, uint64_t offset, uint64_t size, const void *data) noexcept
+    {
+        if (!is_valid_buffer(gs_storage.buffs, buffer) || IS_DEFAULT_ID(buffer)) {
+            PUSH_INVALID_BUFFER_ID_ERROR_MSG();
+            return;
+        }
+
+        const uint64_t buffer_size = gs_storage.buffs.memory_blocks[buffer].size();
+        if (offset + size >= buffer_size) {
+            PUSH_BUFFER_OVERFLOW_ERROR_MSG();
+            return;
+        }
+
+        if (data == nullptr) {
+            return;
+        }
+
+        byte_t* dst = gs_storage.buffs.memory_blocks[buffer].data() + offset;
+        memcpy_s(dst, buffer_size, data, size);
+    }
+
+    
+    void buffer_mng::sub_data(enum_t target, uint64_t offset, uint64_t size, const void *data) noexcept
+    {
+        static context& state = context::instance();
+
+        if (!is_valid_buffer_target(target)) {
+            PUSH_INVALID_BUFFER_TARGET_ERROR_MSG();
+            return;
+        }
+
+        const id_t buffer = get_buffer_by_target_from_state(state, target);
+        named_sub_data(buffer, offset, size, data);
+    }
+
     void buffer_mng::deallocate_named_memory(id_t buffer) const noexcept
     {
         if (IS_DEFAULT_ID(buffer)) {
@@ -253,6 +296,92 @@ namespace amgl
         gs_storage.buffs.memory_blocks[buffer].shrink_to_fit();
     }
 
+    
+    void buffer_mng::copy_buffer_sub_data(enum_t read_target, enum_t write_target, uint64_t read_offset, uint64_t write_offset, uint64_t size) noexcept
+    {
+        static context& state = context::instance();
+
+        if (!is_valid_buffer_target(read_target)) {
+            PUSH_INVALID_BUFFER_TARGET_ERROR_MSG();
+            return;
+        }
+
+        if (!is_valid_buffer_target(write_target)) {
+            PUSH_INVALID_BUFFER_TARGET_ERROR_MSG();
+            return;
+        }
+
+        const id_t read_buffer = get_buffer_by_target_from_state(state, read_target);
+        const id_t write_buffer = get_buffer_by_target_from_state(state, write_target);
+        copy_named_buffer_sub_data(read_buffer, write_buffer, read_offset, write_offset, size);
+    }
+
+    
+    void buffer_mng::copy_named_buffer_sub_data(id_t read_buffer, id_t write_buffer, uint64_t read_offset, uint64_t write_offset, uint64_t size) noexcept
+    {
+        if (!is_valid_buffer(gs_storage.buffs, read_buffer) || IS_DEFAULT_ID(read_buffer)) {
+            PUSH_INVALID_BUFFER_ID_ERROR_MSG();
+            return;
+        }
+
+        if (!is_valid_buffer(gs_storage.buffs, write_buffer) || IS_DEFAULT_ID(write_buffer)) {
+            PUSH_INVALID_BUFFER_ID_ERROR_MSG();
+            return;
+        }
+
+        const uint64_t read_buffer_size = gs_storage.buffs.memory_blocks[read_buffer].size();
+        if (read_offset + size >= read_buffer_size) {
+            PUSH_BUFFER_OVERFLOW_ERROR_MSG();
+            return;
+        }
+
+        const uint64_t write_buffer_size = gs_storage.buffs.memory_blocks[write_buffer].size();
+        if (write_offset + size >= write_buffer_size) {
+            PUSH_BUFFER_OVERFLOW_ERROR_MSG();
+            return;
+        }
+
+        const bool is_overlaped = 
+            IN_INTERVAL_INCLUSIVE(write_offset, write_offset + size, read_offset) || 
+            IN_INTERVAL_INCLUSIVE(read_offset, read_offset + size, write_offset);
+        if (read_buffer == write_buffer && is_overlaped) {
+            PUSH_BUFFER_OVERLAP_ERROR_MSG();
+            return;
+        }
+    }
+
+
+    void buffer_mng::get_buffer_sub_data(enum_t target, uint64_t offset, uint64_t size, void* data) noexcept
+    {
+        static context& state = context::instance();
+
+        const id_t buffer = get_buffer_by_target_from_state(state, target);
+        get_named_buffer_sub_data(buffer, offset, size, data);
+    }
+
+
+    void buffer_mng::get_named_buffer_sub_data(id_t buffer, uint64_t offset, uint64_t size, void* data) noexcept
+    {
+        if (!is_valid_buffer(gs_storage.buffs, buffer) || IS_DEFAULT_ID(buffer)) {
+            PUSH_INVALID_BUFFER_ID_ERROR_MSG();
+            return;
+        }
+
+        const uint64_t buffer_size = gs_storage.buffs.memory_blocks[buffer].size();
+        if (offset + size >= buffer_size) {
+            PUSH_BUFFER_OVERFLOW_ERROR_MSG();
+            return;
+        }
+
+        if (data == nullptr) {
+            return;
+        }
+
+        const byte_t* src = gs_storage.buffs.memory_blocks[buffer].data() + offset;
+        memcpy_s(data, size, src, buffer_size);
+    }
+
+    
     bool buffer_mng::is_buffer(id_t buffer) const noexcept
     {
         if (IS_DEFAULT_ID(buffer)) {

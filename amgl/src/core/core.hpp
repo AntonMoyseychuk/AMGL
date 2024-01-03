@@ -3,7 +3,7 @@
 #define RETURN_IF_FALSE(expr) if (!(expr)) { return; }
 #define RETURN_IF_NULLPTR(ptr) RETURN_IF_FALSE(ptr != nullptr)
 
-#define IN_INTERVAL_INCLUSIVE(begin, end, value) (value >= begin && value <= end)
+#define IN_INTERVAL_INCLUSIVE(begin, end, value) ((value) >= (begin) && (value) <= (end))
 
 #define IS_DEFAULT_ID(id) ((id) == 0)
 

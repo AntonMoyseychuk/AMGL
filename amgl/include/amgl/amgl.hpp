@@ -412,33 +412,43 @@ namespace amgl
     void disable(enum_t flag) noexcept;
     bool is_enabled(enum_t flag) noexcept;
 
-    void get_booleanv(enum_t pname, bool* data) noexcept;                                                   // todo
-    void get_doublev(enum_t pname, double* data) noexcept;                                                  // todo
-    void get_floatv(enum_t pname, float* data) noexcept;                                                    // todo
-    void get_integerv(enum_t pname, int32_t* data) noexcept;                                                // todo
-    void get_integer64v(enum_t pname, int64_t* data) noexcept;                                              // todo
-    void get_booleani_v(enum_t target, uint32_t index, bool* data) noexcept;                                // todo
-    void get_integeri_v(enum_t target, uint32_t index, int32_t* data) noexcept;                             // todo
-    void get_floati_v(enum_t target, uint32_t index, float* data) noexcept;                                 // todo
-    void get_doublei_v(enum_t target, uint32_t index, double* data) noexcept;                               // todo
-    void get_integer64i_v(enum_t target, uint32_t index, int64_t* data) noexcept;                           // todo
+    void get_booleanv(enum_t pname, bool* data) noexcept;                         // todo
+    void get_doublev(enum_t pname, double* data) noexcept;                        // todo
+    void get_floatv(enum_t pname, float* data) noexcept;                          // todo
+    void get_integerv(enum_t pname, int32_t* data) noexcept;                      // todo
+    void get_integer64v(enum_t pname, int64_t* data) noexcept;                    // todo
+    void get_booleani_v(enum_t target, uint32_t index, bool* data) noexcept;      // todo
+    void get_integeri_v(enum_t target, uint32_t index, int32_t* data) noexcept;   // todo
+    void get_floati_v(enum_t target, uint32_t index, float* data) noexcept;       // todo
+    void get_doublei_v(enum_t target, uint32_t index, double* data) noexcept;     // todo
+    void get_integer64i_v(enum_t target, uint32_t index, int64_t* data) noexcept; // todo
 
     void scissor(int32_t x, int32_t y, uint32_t width, uint32_t height) noexcept;
     void viewport(int32_t x, int32_t y, uint32_t width, uint32_t height) noexcept;
 
-    enum_t get_error() noexcept;                                                                            // todo
+    enum_t get_error() noexcept; // todo
 
 #pragma endregion state management
 
 
 #pragma region buffer objects
-    void gen_buffers(uint64_t n, id_t* buffers) noexcept;
-    void delete_buffers(uint64_t n, const id_t* buffers) noexcept;
-
     void bind_buffer(enum_t target, id_t buffer) noexcept;
-
-    void named_buffer_data(id_t buffer, uint64_t size, const void* data, enum_t usage /* unused yet */) noexcept;
+    void bind_buffer_base(enum_t target, uint32_t index, id_t buffer) noexcept; // todo
+    
     void buffer_data(enum_t target, uint64_t size, const void* data, enum_t usage /* unused yet */) noexcept;
+    void named_buffer_data(id_t buffer, uint64_t size, const void* data, enum_t usage /* unused yet */) noexcept;
+    
+    void buffer_sub_data(enum_t target, uint64_t offset, uint64_t size, const void* data) noexcept;
+    void named_buffer_sub_data(id_t buffer, uint64_t offset, uint64_t size, const void* data) noexcept;
+
+    void copy_buffer_sub_data(enum_t read_target, enum_t write_target, uint64_t read_offset, uint64_t write_offset, uint64_t size) noexcept;
+    void copy_named_buffer_sub_data(id_t read_buffer, id_t write_buffer, uint64_t read_offset, uint64_t write_offset, uint64_t size) noexcept;
+
+    void delete_buffers(uint64_t n, const id_t* buffers) noexcept;
+    void gen_buffers(uint64_t n, id_t* buffers) noexcept;
+
+    void get_buffer_sub_data(enum_t target, uint64_t offset, uint64_t size, void* data) noexcept;
+    void get_named_buffer_sub_data(id_t buffer, uint64_t offset, uint64_t size, void* data) noexcept;
 
     bool is_buffer(id_t buffer) noexcept;
 
